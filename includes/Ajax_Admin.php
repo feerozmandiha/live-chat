@@ -575,12 +575,28 @@ class Ajax_Admin {
      * ارسال پیام از طرف ادمین (اصلاح شده)
      */
     public function admin_send_message(): void {
-        if (!check_ajax_referer('wplc_admin_nonce', 'security', false)) {
+        error_log('WP Live Chat DEBUG: admin_send_message called');
+        
+        // بررسی nonce با دیباگ
+        if (!isset($_POST['security'])) {
+            error_log('WP Live Chat DEBUG: security parameter missing');
+            wp_send_json_error(['message' => 'Nonce parameter missing.']);
+        }
+        
+        $nonce = sanitize_text_field($_POST['security']);
+        error_log('WP Live Chat DEBUG: nonce received: ' . $nonce);
+        
+        if (!wp_verify_nonce($nonce, 'wplc_admin_nonce')) {
+            error_log('WP Live Chat DEBUG: nonce verification failed');
+            error_log('WP Live Chat DEBUG: expected nonce: ' . wp_create_nonce('wplc_admin_nonce'));
             wp_send_json_error(['message' => 'Nonce verification failed.']);
         }
         
-        // بررسی دسترسی جدید
-        if (!$this->check_chat_access()) {
+        error_log('WP Live Chat DEBUG: nonce verified successfully');
+        
+        // بررسی دسترسی
+        if (!current_user_can('manage_options') && !$this->is_chat_operator()) {
+            error_log('WP Live Chat DEBUG: permission denied for user ID: ' . get_current_user_id());
             wp_send_json_error(['message' => 'Permission denied. You need administrator or chat operator role.']);
         }
 
@@ -589,7 +605,12 @@ class Ajax_Admin {
         $user_id = get_current_user_id();
         $user_name = get_user_by('id', $user_id)->display_name ?? 'ادمین';
         
+        error_log('WP Live Chat DEBUG: session_id: ' . $session_id);
+        error_log('WP Live Chat DEBUG: message_content: ' . $message_content);
+        error_log('WP Live Chat DEBUG: user_id: ' . $user_id);
+        
         if (!$session_id || empty($message_content)) {
+            error_log('WP Live Chat DEBUG: missing data');
             wp_send_json_error(['message' => 'Missing data.']);
         }
         

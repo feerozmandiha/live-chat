@@ -18,6 +18,8 @@
     class AdminUtils {
         static async postData(action, data) {
             try {
+                console.log(`AJAX Request: ${action}`, data);
+                
                 const formData = new FormData();
                 formData.append('action', action);
                 formData.append('security', wplc_admin_data.nonce);
@@ -31,13 +33,23 @@
                 const response = await fetch(wplc_admin_data.ajax_url, {
                     method: 'POST',
                     body: formData,
+                    // اضافه کردن headers برای دیباگ
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 });
 
+                console.log(`Response status: ${response.status}`);
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    // دریافت متن خطا
+                    const errorText = await response.text();
+                    console.error(`HTTP error! status: ${response.status}, text: ${errorText}`);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText.substring(0, 100)}`);
                 }
                 
                 const json = await response.json();
+                console.log(`AJAX Response: ${action}`, json);
                 
                 if (!json.success) {
                     throw new Error(json.data?.message || 'Operation failed');
@@ -46,6 +58,9 @@
                 return json.data;
             } catch (error) {
                 console.error('Admin AJAX Error:', error);
+                
+                // نمایش پیام خطا به کاربر
+                alert(`خطا در ارتباط با سرور: ${error.message}`);
                 throw error;
             }
         }
