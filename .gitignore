@@ -1,0 +1,9 @@
+/node_modules/
+/vendor/
+*.log
+.DS_Store
+package-lock.json
+composer.json
+composer.cock
+webpack.config.js
+*.zip
