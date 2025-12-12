@@ -3,7 +3,7 @@
  * Plugin Name: WP Live Chat
  * Plugin URI: https://example.com/wp-live-chat
  * Description: یک سیستم چت آنلاین سبک و مدرن با قابلیت اتصال به Pusher و معماری بهینه.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Your Name
  * License: GPL v2 or later
  * Text Domain: wp-live-chat
@@ -15,7 +15,7 @@
 defined('ABSPATH') || exit;
 
 // تعریف ثابت‌های اصلی
-define('WP_LIVE_CHAT_VERSION', '1.0.1');
+define('WP_LIVE_CHAT_VERSION', '1.0.2');
 define('WP_LIVE_CHAT_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WP_LIVE_CHAT_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WP_LIVE_CHAT_PLUGIN_FILE', __FILE__);
